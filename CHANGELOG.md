@@ -3,6 +3,7 @@ All notable changes, that change in some way the behavior of any of our packages
 
 There is a list of all the repositories maintained by monorepo, changes in log below are ordered as this list:
 
+
 * [shopsys/framework]
 * [shopsys/project-base]
 * [shopsys/shopsys]
