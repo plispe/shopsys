@@ -33,4 +33,3 @@ spec:
             value: root
           - name: POSTGRES_DB
             value: shopsys
-

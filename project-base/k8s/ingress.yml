@@ -4,14 +4,14 @@ metadata:
   name: shopsys
 spec:
   rules:
-  - host: $HOSTNAME
+  - host: $FIRST_DOMAIN_HOSTNAME
     http:
       paths:
       - path: /
         backend:
           serviceName: webserver
           servicePort: 8080
-  - host: $HOSTNAME
+  - host: $SECOND_DOMAIN_HOSTNAME
     http:
       paths:
       - path: /

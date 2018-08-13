@@ -1,26 +1,32 @@
-defaults: &defaults
-  docker:
-  - image: petrpliska/shopsys-buildpack:0.1.1
-    auth:
-      username: $DOCKER_USERNAME
-      password: $DOCKER_PASSWORD
-  working_directory: ~/source
+# Before using this config file please read documentation about our CI
+# https://github.com/shopsys/shopsys/
 
-login-to-dockerhub: &login-to-dockerhub
-  name: Login to Docker hub
-  command: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+# Environment variables needs to be set in project settings in circle ci
 
+#   - $DOCKER_USERNAME           : your login to docker hub
+#   - $DOCKER_PASSWORD           : your password to docker hub
+#   - $DOCKER_IMAGE              : name under which you want your php-fpm image to be pushed to docker hub
+#   - $WWW_DATA_UID              : id of user running the kubectl commands on cluster server
+#   - $WWW_DATA_GID              : id of group running the kubectl commands on cluster server
+#   - $KUBERNETES_CONFIG_FILE    : content of ~/.kube/config file on cluster
+#   - $DEVELOPMENT_SERVER_DOMAIN : domain name of your server where you want to deploy your application
+#   - $CLUSTER_SSH_LOGIN         : ssh login to your cluster server
 version: 2
 jobs:
-  deploy-to-k8s:
-    <<: *defaults
+  deploy_to_cluster:
+    docker:
+    - image: petrpliska/shopsys-buildpack:0.1.1
+      auth:
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+    working_directory: ~/source
     steps:
     - setup_remote_docker
     - checkout
 
     - run:
-        <<: *login-to-dockerhub
-
+        name: Login to Docker hub
+        command: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
     - run:
         name: Build docker image
         command: |
@@ -60,7 +66,7 @@ jobs:
         working_directory: project-base/k8s
 
     - run:
-        name: Add persistent volumes into webserver and postgres manifest
+        name: Add persistent volumes pointing to cluster server into webserver and postgres manifest
         command: |
           yq write --inplace deployments/webserver.yml spec.template.spec.volumes[0].hostPath.path /workspace/shopsys/$CIRCLE_BRANCH/source
           yq write --inplace deployments/postgres.yml spec.template.spec.volumes[0].hostPath.path /workspace/shopsys/$CIRCLE_BRANCH/db
@@ -105,28 +111,26 @@ jobs:
     - run:
         name: Set SSH credentials
         command: |
-          echo -e $SERVER_SSL_CERT > ~/shopsys
-          chmod 0400 ~/shopsys
+          echo -e $SERVER_SSL_CERT > ~/cluster_cert
+          chmod 0400 ~/cluster_cert
 
     - run:
         name: Upload repository into cluster, create volumes and set correct permissions
         command: |
           cd .. && tar -zcvf source.tar.gz source
-          ssh -o "StrictHostKeyChecking no" -i ~/shopsys www-data@heimdall.shopsys.com mkdir -p /workspace/shopsys/$CIRCLE_BRANCH
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com rm -rf /workspace/shopsys/$CIRCLE_BRANCH/source
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com sudo chown -R www-data:www-data /workspace/shopsys/$CIRCLE_BRANCH/db
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com rm -rf /workspace/shopsys/$CIRCLE_BRANCH/db/*
-          scp -i ~/shopsys source.tar.gz www-data@heimdall.shopsys.com:/workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com tar -zxvf /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz -C /workspace/shopsys/$CIRCLE_BRANCH/
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com rm /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com mkdir -p /workspace/shopsys/$CIRCLE_BRANCH/db
-          ssh -i ~/shopsys www-data@heimdall.shopsys.com chown -R www-data:www-data /workspace/shopsys/$CIRCLE_BRANCH
+          ssh -o "StrictHostKeyChecking no" -i ~/cluster_cert $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH
+          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN sudo chown -R www-data:www-data /workspace/shopsys/$CIRCLE_BRANCH
+          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN rm -rf /workspace/shopsys/$CIRCLE_BRANCH/*
+          scp -i ~/cluster_cert source.tar.gz $CLUSTER_SSH_LOGIN:/workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
+          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN tar -zxvf /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz -C /workspace/shopsys/$CIRCLE_BRANCH/
+          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN rm /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
+          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH/db
 
     - run:
         name: Deploy application to Kubernetes cluster
         command: |
-          kubectl delete namespace $CIRCLE_BRANCH || true
-          kubectl create namespace $CIRCLE_BRANCH || true
+          kubectl delete namespace $CIRCLE_BRANCH
+          kubectl create namespace $CIRCLE_BRANCH
           kubectl config set-context $(kubectl config current-context) --namespace=$CIRCLE_BRANCH
           kubectl apply --recursive -f .
         working_directory: project-base/k8s
@@ -141,6 +145,7 @@ jobs:
           kubectl rollout status deployment/selenium-server --watch
           kubectl rollout status deployment/smtp-server --watch
           kubectl rollout status deployment/webserver --watch
+    # Storing k8s config and application config as artifacts due to changes done to these files during build process
     - store_artifacts:
         path: project-base/k8s
     - store_artifacts:
@@ -165,6 +170,7 @@ workflows:
   deployment:
     jobs:
     - deploy-to-k8s:
+        # Filter all tags from building
         filters:
           tags:
             ignore: /.*/
