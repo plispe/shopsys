@@ -169,7 +169,7 @@ workflows:
   version: 2
   deployment:
     jobs:
-    - deploy-to-k8s:
+    - deploy-to-cluster:
         # Filter all tags from building
         filters:
           tags:
