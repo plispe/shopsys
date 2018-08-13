@@ -109,22 +109,16 @@ jobs:
           yq write --inplace project-base/app/config/domains_urls.yml domains_urls[1].url http://$SECOND_DOMAIN_HOSTNAME
 
     - run:
-        name: Set SSH credentials
-        command: |
-          echo -e $SERVER_SSL_CERT > ~/cluster_cert
-          chmod 0400 ~/cluster_cert
-
-    - run:
         name: Upload repository into cluster, create volumes and set correct permissions
         command: |
           cd .. && tar -zcvf source.tar.gz source
-          ssh -o "StrictHostKeyChecking no" -i ~/cluster_cert $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH
-          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN sudo chown -R www-data:www-data /workspace/shopsys/$CIRCLE_BRANCH
-          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN rm -rf /workspace/shopsys/$CIRCLE_BRANCH/*
-          scp -i ~/cluster_cert source.tar.gz $CLUSTER_SSH_LOGIN:/workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
-          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN tar -zxvf /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz -C /workspace/shopsys/$CIRCLE_BRANCH/
-          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN rm /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
-          ssh -i ~/cluster_cert $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH/db
+          ssh -o "StrictHostKeyChecking no"  $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH
+          ssh  $CLUSTER_SSH_LOGIN sudo chown -R www-data:www-data /workspace/shopsys/$CIRCLE_BRANCH
+          ssh  $CLUSTER_SSH_LOGIN rm -rf /workspace/shopsys/$CIRCLE_BRANCH/*
+          scp  source.tar.gz $CLUSTER_SSH_LOGIN:/workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
+          ssh  $CLUSTER_SSH_LOGIN tar -zxvf /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz -C /workspace/shopsys/$CIRCLE_BRANCH/
+          ssh  $CLUSTER_SSH_LOGIN rm /workspace/shopsys/$CIRCLE_BRANCH/source.tar.gz
+          ssh  $CLUSTER_SSH_LOGIN mkdir -p /workspace/shopsys/$CIRCLE_BRANCH/db
 
     - run:
         name: Deploy application to Kubernetes cluster
