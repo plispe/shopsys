@@ -129,8 +129,8 @@ jobs:
     - run:
         name: Deploy application to Kubernetes cluster
         command: |
-          kubectl delete namespace $CIRCLE_BRANCH
-          kubectl create namespace $CIRCLE_BRANCH
+          kubectl delete namespace $CIRCLE_BRANCH || true
+          kubectl create namespace $CIRCLE_BRANCH || true
           kubectl config set-context $(kubectl config current-context) --namespace=$CIRCLE_BRANCH
           kubectl apply --recursive -f .
         working_directory: project-base/k8s
