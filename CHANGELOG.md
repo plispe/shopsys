@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Added
 - [#409 - Project-base: framework models extension](https://github.com/shopsys/shopsys/pull/409)
     - Category is extended
+    - Administrator is extended
 
 ### [shopsys/coding-standards]
 #### Added
