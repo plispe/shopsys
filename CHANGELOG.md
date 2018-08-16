@@ -29,6 +29,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#409 - Project-base: framework models extension](https://github.com/shopsys/shopsys/pull/409)
     - factories use EntityNameResolver to create their entities for simplification of extensibility
 
+### [shopsys/project-base]
+#### Added
+- [#409 - Project-base: framework models extension](https://github.com/shopsys/shopsys/pull/409)
+    - Category is extended
+
 ### [shopsys/coding-standards]
 #### Added
 - [#384 - cs: keep class spacing consistent](https://github.com/shopsys/shopsys/pull/384) [@TomasVotruba]
