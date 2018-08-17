@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     - Brand is extended
     - Payment is extended
     - User is extended
+    - Order is extended
 
 ### [shopsys/coding-standards]
 #### Added
