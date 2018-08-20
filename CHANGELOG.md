@@ -24,6 +24,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### [shopsys/framework]
+#### Changed
+- [#409 - Project-base: framework models extension](https://github.com/shopsys/shopsys/pull/409)
+    - factories use EntityNameResolver to create their entities for simplification of extensibility
+
 ### [shopsys/coding-standards]
 #### Added
 - [#384 - cs: keep class spacing consistent](https://github.com/shopsys/shopsys/pull/384) [@TomasVotruba]
