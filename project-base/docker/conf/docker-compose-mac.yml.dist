@@ -98,10 +98,7 @@ services:
             - discovery.type=single-node
 
     microservice-product-search:
-        build:
-            context: ../microservices/product-search/docker
-            args:
-                <<: *permission_settings
+        image: shopsys/shopsys:microservice-test
         container_name: shopsys-framework-microservice-product-search
         volumes:
             - shopsys-framework-microservice-product-search-sync:/var/www/html

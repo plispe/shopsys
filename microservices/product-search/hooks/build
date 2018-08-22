@@ -1,0 +1,6 @@
+#!/bin/bash
+docker build \
+    --build-arg github_token=$github_token \
+    --build-arg www_data_uid=$www_data_uid \
+    --build-arg www_data_gid=$www_data_gid \
+    -f $DOCKERFILE_PATH -t $IMAGE_NAME .

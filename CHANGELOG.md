@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#384 - cs: keep class spacing consistent](https://github.com/shopsys/shopsys/pull/384) [@TomasVotruba]
     - added new rule (along with fixer `ClassAttributesSeparationFixer`) into `easy-coding-standard.yml`
 
+###[shopsys/microservice-product-search]
+#### Changed
+- [# - Microservice is now built as Docker Image]()
+
 ## [7.0.0-alpha5] - 2018-08-22
 ### [shopsys/framework]
 #### Added
