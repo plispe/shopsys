@@ -18,6 +18,10 @@ There is a list of all the repositories maintained by monorepo, changes in log b
 
 ## [From 7.0.0-alpha5 to Unreleased]
 
+### [shopsys/project-base]
+- php-fpm and microservice-product-search containers now expect github_token set, so it is not necessary to provide it every time those containers are rebuilt
+    - see containers `php-fpm` and `microservice-product-search` in `docker-compose.dist` file in `docker/conf` folder
+
 ## [From 7.0.0-alpha4 to 7.0.0-alpha5]
 
 ### [shopsys/framework]

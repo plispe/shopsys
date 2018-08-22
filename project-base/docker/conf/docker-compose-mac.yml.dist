@@ -28,6 +28,7 @@ services:
             args: &permission_settings
                 www_data_uid: 501
                 www_data_gid: 20
+                github_token: place-your-token-here
         container_name: shopsys-framework-php-fpm
         volumes:
             - shopsys-framework-sync:/var/www/html

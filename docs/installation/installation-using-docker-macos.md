@@ -39,7 +39,6 @@ Create `docker-sync.yml` from template [`docker-sync.yml.dist`](../../project-ba
 cp docker/conf/docker-sync.yml.dist docker-sync.yml
 ```
 
-
 #### Set the UID and GID to allow file access in mounted volumes
 Because we want both the user in host machine (you) and the user running php-fpm in the container to access shared files, we need to make sure that they both have the same UID and GID.
 This can be achieved by build arguments `www_data_uid` and `www_data_gid` that should be set to the same UID and GID as your own user in your `docker-compose.yml`.
@@ -50,6 +49,12 @@ You can find out your UID by running `id -u` and your GID by running `id -g`.
 Once you get these values, set these values into your `docker-compose.yml` into `php-fpm` container definition by replacing values in `args` section.
 
 Also you need to insert your UID into `docker-sync.yml` into value `sync_userid`.
+
+#### Set the Github token in your docker-compose.yml file
+Shopsys Framework includes a lot of dependencies installed via composer. 
+During composer install the Github API Rate Limit is reached and it is necessary to provide Github token to overcome this limit.
+This token can be generated on [Github -> Settings -> Developer Settings -> Personal access tokens](https://github.com/settings/tokens/new?scopes=repo&description=Composer+API+token)
+The token save in your `docker-compose.yml` file in `services -> php-fpm -> build -> args -> github_token` (replace the `place-your-token-here` string).
 
 ### 3. Compose Docker container
 On MacOS you need to synchronize folders using docker-sync.
@@ -65,5 +70,5 @@ docker-compose up -d --build
 
 ```
 
-### 5. Setup the application
+### 4. Setup the application
 [Application setup guide](installation-using-docker-application-setup.md)
