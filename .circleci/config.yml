@@ -139,8 +139,10 @@ jobs:
     - run:
         name: Create databases, build application and run tests
         command: |
-          kubectl get pods
-          PHP_FPM_POD=$(kubectl get pods -l app=webserver -o=jsonpath='{.items[0].metadata.name}')
+          WEBSERVER_FPM_POD=$(kubectl get pods -l app=webserver -o=jsonpath='{.items[0].metadata.name}')
+          PHP_FPM_POD=$($WEBSERVER_FPM_POD -c php)
+          NGINX_POD=$($WEBSERVER_FPM_POD -c nginx)
+          kubectl cp PHP_FPM_POD:/var/www/html NGINX_POD:/var/www/html
           kubectl exec $PHP_FPM_POD -c php ./phing db-create test-db-create build-demo-ci
 
 workflows:

@@ -37,8 +37,6 @@ spec:
             items:
             - key: php-ini-overrides.ini
               path: php.ini
-        - name: application-directory
-          emptyDir: {}
       containers:
       - image: $PHP_FPM_IMAGE
         name: php
@@ -46,8 +44,6 @@ spec:
           - name: php-configuration
             mountPath: /usr/local/etc/php/php.ini
             subPath: php.ini
-          - name: application-directory
-            mountPath: /var/www/html
       - image: nginx:1.13.10-alpine
         name: nginx
         ports:
@@ -56,8 +52,6 @@ spec:
         volumeMounts:
           - name: nginx-configuration
             mountPath: /etc/nginx/conf.d
-          - name: application-directory
-            mountPath: /var/www/html
         lifecycle:
           preStop:
             exec:
