@@ -28,13 +28,11 @@ spec:
             path: php.ini
       containers:
       - image: $MICROSERVICE_PRODUCT_SEARCH_PHP_FPM_IMAGE
-        name: php
+        name: microservice-product-search
         volumeMounts:
         - name: product-search-php-configuration
           mountPath: /usr/local/etc/php/php.ini
           subPath: php.ini
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - nginx -s quit
+        ports:
+        - containerPort: 8000
+          name: http

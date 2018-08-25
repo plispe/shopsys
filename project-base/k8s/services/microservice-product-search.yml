@@ -9,4 +9,4 @@ spec:
   ports:
   - name: microservice-product-search
     port: 8000
-    targetPort: 8080
+    targetPort: 8000
