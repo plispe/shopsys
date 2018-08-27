@@ -69,8 +69,8 @@ jobs:
           cp project-base/app/config/domains_urls.yml.dist project-base/app/config/domains_urls.yml
           cp project-base/app/config/parameters_test.yml.dist project-base/app/config/parameters_test.yml
           cp project-base/app/config/parameters.yml.dist project-base/app/config/parameters.yml
-          FIRST_DOMAIN_HOSTNAME=$CIRCLE_BRANCH-circle.$DEVELOPMENT_SERVER_DOMAIN:$NGINX_INGRESS_CONTROLLER_HOST_PORT
-          SECOND_DOMAIN_HOSTNAME=2.$CIRCLE_BRANCH-circle.$DEVELOPMENT_SERVER_DOMAIN:$NGINX_INGRESS_CONTROLLER_HOST_PORT
+          FIRST_DOMAIN_HOSTNAME=$CIRCLE_BRANCH-circle.$DEVELOPMENT_SERVER_DOMAIN
+          SECOND_DOMAIN_HOSTNAME=2.$CIRCLE_BRANCH-circle.$DEVELOPMENT_SERVER_DOMAIN
           yq write --inplace project-base/app/config/domains_urls.yml domains_urls[0].url http://$FIRST_DOMAIN_HOSTNAME
           yq write --inplace project-base/app/config/domains_urls.yml domains_urls[1].url http://$SECOND_DOMAIN_HOSTNAME
 
