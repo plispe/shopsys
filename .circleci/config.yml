@@ -89,20 +89,20 @@ jobs:
           docker image push $DOCKER_USERNAME/$DOCKER_IMAGE:$CIRCLE_SHA1 &&
           docker image push $DOCKER_USERNAME/$DOCKER_IMAGE:latest)
 
-    # -   run:
-    #       name: Build docker image
-    #       command: |
-    #         # Calculate Docker image tag from Dockerfile checksum. Docker Image tag is used later in Kubernetes deployment.
-    #         # On shopsys development server we can assume, that Docker image used by Kubernetes deployment will be always present, because it was builded on same server.
-    #         # In common we should push this image into Docker registry and use image from registry later.
-    #         docker image pull $DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 || (docker image build \
-    #           --build-arg composer_github_oauth_token=$COMPOSER_GITHUB_OATUH_TOKEN \
-    #           --tag $DOCKER_$DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 \
-    #           --tag $DOCKER_$DOCKER_USERNAME/microservice-elastic:latest \
-    #           -f microservices/product-search/docker/Dockerfile . && \
-    #         # Push image into docker registry
-    #         docker image push $DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 &&
-    #         docker image push $DOCKER_USERNAME/microservice-elastic:latest)
+    -   run:
+          name: Build docker image
+          command: |
+            # Calculate Docker image tag from Dockerfile checksum. Docker Image tag is used later in Kubernetes deployment.
+            # On shopsys development server we can assume, that Docker image used by Kubernetes deployment will be always present, because it was builded on same server.
+            # In common we should push this image into Docker registry and use image from registry later.
+            docker image pull $DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 || (docker image build \
+              --build-arg composer_github_oauth_token=$COMPOSER_GITHUB_OATUH_TOKEN \
+              --tag $DOCKER_$DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 \
+              --tag $DOCKER_$DOCKER_USERNAME/microservice-elastic:latest \
+              -f microservices/product-search/docker/Dockerfile . && \
+            # Push image into docker registry
+            docker image push $DOCKER_USERNAME/microservice-elastic:$CIRCLE_SHA1 &&
+            docker image push $DOCKER_USERNAME/microservice-elastic:latest)
 
     - run:
         name: Set SSH credentials
