@@ -48,6 +48,9 @@ spec:
               mountPath: /var/www/html
       containers:
       - image: $PHP_FPM_IMAGE
+        securityContext:
+          runAsUser: 82
+        workingDir: /var/www/html  
         name: php
         volumeMounts:
           - name: php-configuration
