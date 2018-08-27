@@ -145,7 +145,9 @@ class Domain implements DomainIdsProviderInterface
     {
         // Request::getBasePath() never contains script file name (/index.php)
         $url = $request->getSchemeAndHttpHost() . $request->getBasePath();
-
+        var_dump($url);
+        var_dump($this->domainConfigs);
+        exit;
         foreach ($this->domainConfigs as $domainConfig) {
             if ($domainConfig->getUrl() === $url) {
                 $this->currentDomainConfig = $domainConfig;
